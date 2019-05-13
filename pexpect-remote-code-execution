@@ -1,3 +1,4 @@
+```python
 """
 This module is to execute any command on a remote peer machine
 """
@@ -37,3 +38,4 @@ def execute_command_remotly(hostname, username, password, *commands):
         else:
             logging.exception(
                 "Error in executing pexpect commands %s on peer device: %s,  %s", commands, hostname, "Login failed")
+```
