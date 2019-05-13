@@ -1,0 +1,39 @@
+"""
+This module is to execute any command on a remote peer machine
+"""
+import logging
+
+def execute_command_remotly(hostname, username, password, *commands):
+    """
+    Execute any command on remote devices
+    :param server: Local server ip
+    :param username: User
+    :param password: Password
+    :param *command: command list
+    :return: Results of the commands in executed order
+    """
+    try:
+        if not (hostname or username or password or commands):
+            logging.debug(
+                "Skip running remote commands args are empty")
+            return None
+        from pexpect import pxssh
+        results = []
+        server = pxssh.pxssh()
+        server.login(hostname, username, password)
+        for command in commands:
+            server.sendline(command)  # run a command
+            server.prompt()  # match the prompt
+            output = server.before
+            result = output.replace(command, '').strip()
+            results.append(result)
+        server.logout()
+        return results
+    except Exception as exception:
+        # ssh login exceptions also catched here skip login exception
+        if "exitstatus: 255" not in exception: # ssh exitstatus 255 is unsuccess remote logins
+            logging.exception(
+                "Error in executing pexpect commands %s on peer device: %s,  %s", commands, hostname, exception)
+        else:
+            logging.exception(
+                "Error in executing pexpect commands %s on peer device: %s,  %s", commands, hostname, "Login failed")
