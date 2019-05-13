@@ -1,0 +1,1 @@
+0 */6 * * * echo "`date` | Open file count: `lsof -p 17105 | wc -l`" >> /home/chamaral/open-file-count-server.txt
